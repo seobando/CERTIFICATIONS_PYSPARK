@@ -1,10 +1,6 @@
 # SPARK FUNDAMENTALS
 
-# Databricks Certified Associate Developer for Apache Spark 3.0
-
-**Prerequisites:**
-
-The minimally qualified candidate should:
+This is a summary of my studies to the Spark Associate Developer for Apache Spark 3.0, the requirements [are](https://academy.databricks.com/exam/databricks-certified-associate-developer):
 
 - have a basic understanding of the Spark architecture, including Adaptive Query Execution
 - be able to apply the Spark DataFrame API to complete individual data manipulation task, including: 
@@ -12,9 +8,33 @@ The minimally qualified candidate should:
   - filtering, dropping, sorting, and aggregating rows
   - joining, reading, writing and partitioning DataFrames
   - working with UDFs and Spark SQL functions
+ 
+## Spark arquitecture
+
+## DataFrame API
+ 
+ 
+### Selecting, renaming and manipulating columns:
+
+
+
+
+## Filtering, dropping, sorting, and aggregating rows
+
+- Aggregate functions
+- Sorting functions
+- String functions 
+
+## joining, reading, writing and partitioning DataFrames
+ 
+ 
+## working with UDFs and Spark SQL functions
   
-It is expected that developers that have been using the Spark DataFrame API for six months or more should be able to pass this certification exam.
+  
+## Other functions
 
-While it will not be explicitly tested, the candidate must have a working knowledge of either Python or Scala. The exam is available in both languages.
-
-https://academy.databricks.com/exam/databricks-certified-associate-developer
+- Collection functions
+- Datetime functions
+- Math functions
+- Miscellaneous functions
+- Non-aggregate functions
