@@ -15,23 +15,8 @@ This is a summary of my studies to the Spark Associate Developer for Apache Spar
  
  Page 145
 
-
-Transformations
-
-orderBy()
-groupBy()
-filter()
-select()
-join()
-
-Actions
-
-show()
-take()
-count()
-collect()
-save()
- 
+Transformations examples: orderBy(), groupBy(), filter(), select(), join()
+Actions examples: show(), take(), count(), collect(), save()
  
 ### Selecting, renaming and manipulating columns:
 
@@ -82,7 +67,6 @@ df.select("column","column","column").where("condition")
 
 ## joining, reading, writing and partitioning DataFrames
  
-
 - Joining:
 
 ```PYTHON
@@ -90,23 +74,22 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
  ```
 
 - Reading and Writing from local sources
- 
- - Reading:
+
+  - Reading:
  
     - Json Files
-   ```PYTHON
+    ```PYTHON
     # Read json files
     # Implicit
     df = spark.read.format("json").option("path", json_file).load()
     # Explicit
     df = spark.read.json(json_file)
-  ```
-
-  - CSV Files
-   ```PYTHON
-  # Read csv files
-  # Implicit
-  df = (spark
+    ```
+    - CSV Files
+    ```PYTHON
+    # Read csv files
+    # Implicit
+    df = (spark
         .read
         .format("csv")
         .option("header", "true")
@@ -115,113 +98,108 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
         .option("nullValue", "")	  # replace any null data field with “”
         .option("path", csv_file)
         .load())
-  # Explicit
-  df = spark.read.csv(file_path, header=True, inferSchema=True)
-  ```
-
-  - Parquet Files
-  ```PYTHON
-  # Read parquet files
-  # Implicit
-  df = (spark
+    # Explicit
+    df = spark.read.csv(file_path, header=True, inferSchema=True)
+    ```
+    - Parquet Files
+    ```PYTHON
+    # Read parquet files
+    # Implicit
+    df = (spark
         .read
         .format("parquet")
         .option("path", parquet_file)
         .load())
-  # Explicit      
-  df = spark.read.parquet(parquet_file)
-   ```
+    # Explicit      
+    df = spark.read.parquet(parquet_file)
+    ```
+  - Writing:
  
- - Writing:
+    - CSV Files
+    ```PYTHON
+    # Writing csv files
+    # Implicit
+    df.write.format('csv').save('filename.csv')
+    # Explicit
+    df.write.csv('filename.csv')
+    ```
+    - Json Files
+    ```PYTHON
+    # Writing json files
+    # Implicit
+    df.write.format('json').save('filename.json')
+    # Explicit
+    df.write.json('filename.json')
+    ```
+    - Parquet Files
+    ```PYTHON
+    # Writing parquet files
+    # Implicit
+    df.write.format('parquet').save('filename.parquet')
+    # Explicit
+    df.write.parquet('filename.parquet')
+    ```
  
-  - CSV Files
-   ```PYTHON
-  # Writing csv files
-  # Implicit
-  df.write.format('csv').save('filename.csv')
-  # Explicit
-  df.write.csv('filename.csv')
-   ```
- 
-  - Json Files
-  ```PYTHON
-  # Writing json files
-  # Implicit
-  df.write.format('json').save('filename.json')
-  # Explicit
-  df.write.json('filename.json')
-  ```
+- Reading or Writing from external sources
 
-  - Parquet Files
-  ```PYTHON
-  # Writing parquet files
-  # Implicit
-  df.write.format('parquet').save('filename.parquet')
-  # Explicit
-  df.write.parquet('filename.parquet')
-   ```
- 
- - Reading or Writing from external sources
+  - Reading
 
-- Reading
+    - Postgress
+    ```PYTHON
+    # Read Option 1: Loading data from a JDBC source using load method
+    jdbcDF1 = (spark
+    .read
+    .format("jdbc")
+    .option("url", "jdbc:postgresql://[DBSERVER]")
+    .option("dbtable", "[SCHEMA].[TABLENAME]")
+    .option("user", "[USERNAME]")
+    .option("password", "[PASSWORD]")
+    .load())
+    # Read Option 2: Loading data from a JDBC source using jdbc method
+    jdbcDF2 = (spark
+    .read
+    .jdbc("jdbc:postgresql://[DBSERVER]", "[SCHEMA].[TABLENAME]",
+    properties={"user": "[USERNAME]", "password": "[PASSWORD]"}))
+    ```
 
-  - Postgress
-  ```PYTHON
-  # Read Option 1: Loading data from a JDBC source using load method
-  jdbcDF1 = (spark
+    - Mongo
+    ```PYTHON
+    df = spark.read.format("mongo").option("uri",
+    "mongodb://127.0.0.1/people.contacts").load()
+    ```
 
-  .read
-  .format("jdbc")
-  .option("url", "jdbc:postgresql://[DBSERVER]")
-  .option("dbtable", "[SCHEMA].[TABLENAME]")
-  .option("user", "[USERNAME]")
-  .option("password", "[PASSWORD]")
-  .load())
-  # Read Option 2: Loading data from a JDBC source using jdbc method
-  jdbcDF2 = (spark
-  .read
-  .jdbc("jdbc:postgresql://[DBSERVER]", "[SCHEMA].[TABLENAME]",
-  properties={"user": "[USERNAME]", "password": "[PASSWORD]"}))
-  ```
+  - Writing
 
-  - Mongo
-  ```PYTHON
-  df = spark.read.format("mongo").option("uri",
-  "mongodb://127.0.0.1/people.contacts").load()
-  ```
+    - Postgress
+    ```PYTHON
+    # Write Option 1: Saving data to a JDBC source using save method
+    (jdbcDF1
+    .write
+    .format("jdbc")
+    .option("url", "jdbc:postgresql://[DBSERVER]")
+    .option("dbtable", "[SCHEMA].[TABLENAME]")
+    .option("user", "[USERNAME]")
+    .option("password", "[PASSWORD]")
+    .save())
+    # Write Option 2: Saving data to a JDBC source using jdbc method
+    (jdbcDF2
+    .write
+    .jdbc("jdbc:postgresql:[DBSERVER]", "[SCHEMA].[TABLENAME]",
+    properties={"user": "[USERNAME]", "password": "[PASSWORD]"}))
+    ```
 
-- Writing
+    - Mongo
+    ```PYTHON
+    people.write.format("mongo").mode("append").option("database",
+    "people").option("collection", "contacts").save()
+    ```
 
-  - Postgress
-  ```PYTHON
-  # Write Option 1: Saving data to a JDBC source using save method
-  (jdbcDF1
-  .write
-  .format("jdbc")
-  .option("url", "jdbc:postgresql://[DBSERVER]")
-  .option("dbtable", "[SCHEMA].[TABLENAME]")
-  .option("user", "[USERNAME]")
-  .option("password", "[PASSWORD]")
-  .save())
-  # Write Option 2: Saving data to a JDBC source using jdbc method
-  (jdbcDF2
-  .write
-  .jdbc("jdbc:postgresql:[DBSERVER]", "[SCHEMA].[TABLENAME]",
-  properties={"user": "[USERNAME]", "password": "[PASSWORD]"}))
-  ```
+    - Partition:
 
-  - Mongo
-  ```PYTHON
-  people.write.format("mongo").mode("append").option("database",
-  "people").option("collection", "contacts").save()
-  ```
- 
-- Partition:
- 
- ```PYTHON
+    ```PYTHON
 
 
- ```
+    ```
  
 ## working with UDFs and Spark SQL functions
   
@@ -232,9 +210,9 @@ from pyspark.sql.types import LongType
 
 # Create cubed function
 def cubed(s):
-  return s * s * s
-  
- # Register UDF
+return s * s * s
+
+# Register UDF
 spark.udf.register("cubed", cubed, LongType())
 
 # Generate temporary view
@@ -247,7 +225,7 @@ spark.udf.register("cubed", cubed, LongType())
 spark.range(1, 9).createOrReplaceTempView("udf_test")
 
 spark.sql("SELECT id, cubed(id) AS id_cubed FROM udf_test").show()
- ```
+```
  
 - UDFs with DataFrame API
 
@@ -288,7 +266,6 @@ df_2 = spark.sql('SELECT * FROM tableName WHERE condition')
 - Math functions
 - Miscellaneous functions
 - Non-aggregate functions
-
 - Union and joins
 - Windowing
 - Modifications
