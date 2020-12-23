@@ -93,68 +93,128 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
  
  - Reading:
  
- ```PYTHON
-# Read json files
-# Implicit
-df = spark.read.format("json").option("path", json_file).load()
-# Explicit
-df = spark.read.json(json_file)
+    - Json Files
+   ```PYTHON
+  # Read json files
+  # Implicit
+  df = spark.read.format("json").option("path", json_file).load()
+  # Explicit
+  df = spark.read.json(json_file)
+  ```
 
-# Read csv files
-# Implicit
-df = (spark
-      .read
-      .format("csv")
-      .option("header", "true")
-      .schema(schema)
-      .option("mode", "FAILFAST")  # exit if any errors
-      .option("nullValue", "")	  # replace any null data field with “”
-      .option("path", csv_file)
-      .load())
-# Explicit
-df = spark.read.csv(file_path, header=True, inferSchema=True)
+  - CSV Files
+   ```PYTHON
+  # Read csv files
+  # Implicit
+  df = (spark
+        .read
+        .format("csv")
+        .option("header", "true")
+        .schema(schema)
+        .option("mode", "FAILFAST")  # exit if any errors
+        .option("nullValue", "")	  # replace any null data field with “”
+        .option("path", csv_file)
+        .load())
+  # Explicit
+  df = spark.read.csv(file_path, header=True, inferSchema=True)
+  ```
 
-# Read parquet files
-# Implicit
-df = (spark
-      .read
-      .format("parquet")
-      .option("path", parquet_file)
-      .load())
-# Explicit      
-df = spark.read.parquet(parquet_file)
- ```
+  - Parquet Files
+  ```PYTHON
+  # Read parquet files
+  # Implicit
+  df = (spark
+        .read
+        .format("parquet")
+        .option("path", parquet_file)
+        .load())
+  # Explicit      
+  df = spark.read.parquet(parquet_file)
+   ```
  
  - Writing:
  
- ```PYTHON
-# Writing csv files
-# Implicit
-df.write.format('csv').save('filename.csv')
-# Explicit
-df.write.csv('filename.csv')
+  - CSV Files
+   ```PYTHON
+  # Writing csv files
+  # Implicit
+  df.write.format('csv').save('filename.csv')
+  # Explicit
+  df.write.csv('filename.csv')
+   ```
+ 
+  - Json Files
+  ```PYTHON
+  # Writing json files
+  # Implicit
+  df.write.format('json').save('filename.json')
+  # Explicit
+  df.write.json('filename.json')
+  ```
 
-# Writing json files
-# Implicit
-df.write.format('json').save('filename.json')
-# Explicit
-df.write.json('filename.json')
-
-# Writing parquet files
-# Implicit
-df.write.format('parquet').save('filename.parquet')
-# Explicit
-df.write.parquet('filename.parquet')
- ```
+  - Parquet Files
+  ```PYTHON
+  # Writing parquet files
+  # Implicit
+  df.write.format('parquet').save('filename.parquet')
+  # Explicit
+  df.write.parquet('filename.parquet')
+   ```
  
 > Reading or Writing from external sources
 
 - Reading
 
+  - Postgress
+  ```PYTHON
+  # Read Option 1: Loading data from a JDBC source using load method
+  jdbcDF1 = (spark
+
+  .read
+  .format("jdbc")
+  .option("url", "jdbc:postgresql://[DBSERVER]")
+  .option("dbtable", "[SCHEMA].[TABLENAME]")
+  .option("user", "[USERNAME]")
+  .option("password", "[PASSWORD]")
+  .load())
+  # Read Option 2: Loading data from a JDBC source using jdbc method
+  jdbcDF2 = (spark
+  .read
+  .jdbc("jdbc:postgresql://[DBSERVER]", "[SCHEMA].[TABLENAME]",
+  properties={"user": "[USERNAME]", "password": "[PASSWORD]"}))
+  ```
+
+  - Mongo
+  ```PYTHON
+  df = spark.read.format("mongo").option("uri",
+  "mongodb://127.0.0.1/people.contacts").load()
+  ```
 
 - Writing
 
+  - Postgress
+  ```PYTHON
+  # Write Option 1: Saving data to a JDBC source using save method
+  (jdbcDF1
+  .write
+  .format("jdbc")
+  .option("url", "jdbc:postgresql://[DBSERVER]")
+  .option("dbtable", "[SCHEMA].[TABLENAME]")
+  .option("user", "[USERNAME]")
+  .option("password", "[PASSWORD]")
+  .save())
+  # Write Option 2: Saving data to a JDBC source using jdbc method
+  (jdbcDF2
+  .write
+  .jdbc("jdbc:postgresql:[DBSERVER]", "[SCHEMA].[TABLENAME]",
+  properties={"user": "[USERNAME]", "password": "[PASSWORD]"}))
+  ```
 
+  - Mongo
+  ```PYTHON
+  people.write.format("mongo").mode("append").option("database",
+  "people").option("collection", "contacts").save()
+  ```
  
 - Partition:
  
