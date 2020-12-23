@@ -89,6 +89,8 @@ df.select("column","column","column").where("condition")
 df = df_1.join(df_2,on="key",how="typeOfJoinr"
  ```
  
+ > Reading and Writing from local sources
+ 
  - Reading:
  
  ```PYTHON
@@ -144,6 +146,15 @@ df.write.format('parquet').save('filename.parquet')
 # Explicit
 df.write.parquet('filename.parquet')
  ```
+ 
+> Reading or Writing from external sources
+
+- Reading
+
+
+- Writing
+
+
  
 - Partition:
  
