@@ -279,5 +279,5 @@ TEXT
 
 ## REFERENCES
 
-TEXT
-
+- https://spark.apache.org/docs/latest/api/python/pyspark.html
+- Learning Spark
