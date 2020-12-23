@@ -74,16 +74,36 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
  - Reading:
  
  ```PYTHON
-# Read by changing the format
 
 # Read json files
-
+- Implicit
+df = spark.read.format("json").option("path", json_file).load()
+- Explicit
+df = spark.read.json(json_file)
 
 # Read csv files
-people_df = spark.read.csv(file_path, header=True, inferSchema=True)
+- Implicit
+df = (spark
+      .read
+      .format("csv")
+      .option("header", "true")
+      .schema(schema)
+      .option("mode", "FAILFAST")  # exit if any errors
+      .option("nullValue", "")	  # replace any null data field with “”
+      .option("path", csv_file)
+      .load())
+- Explicit
+df = spark.read.csv(file_path, header=True, inferSchema=True)
 
 # Read parquet files
-
+- Implicit
+df = (spark
+      .read
+      .format("parquet")
+      .option("path", parquet_file)
+      .load())
+- Explicit      
+df = spark.read.parquet(parquet_file)
  ```
  
  - Writing:
@@ -101,10 +121,16 @@ spark.read.csv('path_file')
 spark.read.parquet('path_file')
  ```
  
-> Reading and Writing from files: 
-
-
-
+> Reading and Writing from external sources: 
+ 
+ ```PYTHON
+(df.write.format("parquet")
+  .mode("overwrite")
+  .option("path", "/tmp/data/parquet/df_parquet")
+  .option("compression", "snappy")
+  .save())
+ ```
+ 
 > Partition:
  
  ```PYTHON
