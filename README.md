@@ -11,6 +11,8 @@ This is a summary of my studies to the Spark Associate Developer for Apache Spar
  
 ## Spark arquitecture
 
+TEXT
+
 ## DataFrame API
  
  Page 145
@@ -199,13 +201,14 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
 - Partition:
 
 ```PYTHON
-
-
+PENDING
 ```
  
-## working with UDFs and Spark SQL functions
+## Working with UDFs and Spark SQL functions
   
-- UDFS with SQL
+### UDFS 
+
+- With SQL
 
 ```PYTHON
 from pyspark.sql.types import LongType
@@ -229,7 +232,7 @@ spark.range(1, 9).createOrReplaceTempView("udf_test")
 spark.sql("SELECT id, cubed(id) AS id_cubed FROM udf_test").show()
 ```
  
-- UDFs with DataFrame API
+- With DataFrame API
 
 ```PYTHON
 import pandas as pd
@@ -251,7 +254,7 @@ df = spark.range(1, 4)
 df.select("id", cubed_udf(col("id"))).show()
 ```
 
-- Spark SQL
+### Spark SQL
   
  ```PYTHON  
 df = spark.read.parquet('yourFile.parquet')
@@ -260,6 +263,8 @@ df.createOrReplaceTempView('tableName')
 
 df_2 = spark.sql('SELECT * FROM tableName WHERE condition')  
  ```  
+  
+TEXT  
   
 ## Functions
 
@@ -271,5 +276,8 @@ df_2 = spark.sql('SELECT * FROM tableName WHERE condition')
 - Union and joins
 - Windowing
 - Modifications
+
+## REFERENCES
+
 
 
