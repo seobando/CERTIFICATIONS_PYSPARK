@@ -83,13 +83,11 @@ df.select("column","column","column").where("condition")
 ## joining, reading, writing and partitioning DataFrames
  
 
-> Joining:
+- Joining:
 
 ```PYTHON
 df = df_1.join(df_2,on="key",how="typeOfJoinr"
  ```
- 
- > Reading and Writing from files:
  
  - Reading:
  
@@ -148,24 +146,27 @@ df.write.format('parquet').save('filename.parquet')
 df.write.parquet('filename.parquet')
  ```
  
-> Reading and Writing from external sources: 
+- Partition:
  
  ```PYTHON
-(df.write.format("parquet")
-  .mode("overwrite")
-  .option("path", "/tmp/data/parquet/df_parquet")
-  .option("compression", "snappy")
-  .save())
- ```
- 
-> Partition:
- 
- ```PYTHON
-code
+
+
  ```
  
 ## working with UDFs and Spark SQL functions
   
+- UDFS
+
+
+- Spark SQL
+  
+ ```PYTHON  
+df = spark.read.parquet('yourFile.parquet')
+
+df.createOrReplaceTempView('tableName')
+
+df_2 = spark.sql('SELECT * FROM tableName WHERE condition')  
+ ```  
   
 ## Other functions
 
