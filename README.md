@@ -194,12 +194,12 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
     "people").option("collection", "contacts").save()
     ```
 
-    - Partition:
+- Partition:
 
-    ```PYTHON
+```PYTHON
 
 
-    ```
+```
  
 ## working with UDFs and Spark SQL functions
   
