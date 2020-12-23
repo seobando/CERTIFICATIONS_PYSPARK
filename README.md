@@ -13,6 +13,26 @@ This is a summary of my studies to the Spark Associate Developer for Apache Spar
 
 ## DataFrame API
  
+ Page 145
+
+
+Transformations
+
+orderBy()
+groupBy()
+filter()
+select()
+join()
+
+Actions
+
+show()
+take()
+count()
+collect()
+save()
+ 
+ 
 ### Selecting, renaming and manipulating columns:
 
 - Selecting:
@@ -109,16 +129,23 @@ df = spark.read.parquet(parquet_file)
  - Writing:
  
  ```PYTHON
-# Writing by changing the format
-
 # Writing csv files
-spark.read.csv('path_file')
+# Implicit
+df.write.format('csv').save('filename.csv')
+# Explicit
+df.write.csv('filename.csv')
 
 # Writing json files
-
+# Implicit
+df.write.format('json').save('filename.json')
+# Explicit
+df.write.json('filename.json')
 
 # Writing parquet files
-spark.read.parquet('path_file')
+# Implicit
+df.write.format('parquet').save('filename.parquet')
+# Explicit
+df.write.parquet('filename.parquet')
  ```
  
 > Reading and Writing from external sources: 
@@ -152,21 +179,4 @@ code
 - Windowing
 - Modifications
 
-Page 145
 
-
-Transformations
-
-orderBy()
-groupBy()
-filter()
-select()
-join()
-
-Actions
-
-show()
-take()
-count()
-collect()
-save()
