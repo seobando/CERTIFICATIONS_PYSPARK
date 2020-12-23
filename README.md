@@ -48,6 +48,8 @@ df = df.withColumnRenamed("Column", "NewColumnName")
 df.withColumn("NewColumn", df.columnName[some operation])
 ```
 
+-- CONTROL FLOW WHEN / OTHERWISE
+
 https://github.com/seobando/DATACAMP_DE/blob/main/Cleaning_Data_with_PySpark/2_Manipulating_DataFrames_in_the_real_world.md
 
 ## Filtering, dropping, sorting, and aggregating rows
