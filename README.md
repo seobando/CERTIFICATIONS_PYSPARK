@@ -76,13 +76,13 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
  ```PYTHON
 
 # Read json files
-- Implicit
+# Implicit
 df = spark.read.format("json").option("path", json_file).load()
-- Explicit
+# Explicit
 df = spark.read.json(json_file)
 
 # Read csv files
-- Implicit
+# Implicit
 df = (spark
       .read
       .format("csv")
@@ -92,17 +92,17 @@ df = (spark
       .option("nullValue", "")	  # replace any null data field with “”
       .option("path", csv_file)
       .load())
-- Explicit
+# Explicit
 df = spark.read.csv(file_path, header=True, inferSchema=True)
 
 # Read parquet files
-- Implicit
+# Implicit
 df = (spark
       .read
       .format("parquet")
       .option("path", parquet_file)
       .load())
-- Explicit      
+# Explicit      
 df = spark.read.parquet(parquet_file)
  ```
  
