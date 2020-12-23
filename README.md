@@ -261,7 +261,7 @@ df.createOrReplaceTempView('tableName')
 df_2 = spark.sql('SELECT * FROM tableName WHERE condition')  
  ```  
   
-## Other functions
+## Functions
 
 - Collection functions
 - Datetime functions
