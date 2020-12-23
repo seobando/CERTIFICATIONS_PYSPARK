@@ -88,18 +88,18 @@ df.select("column","column","column").where("condition")
 ```PYTHON
 df = df_1.join(df_2,on="key",how="typeOfJoinr"
  ```
- 
- > Reading and Writing from local sources
+
+- Reading and Writing from local sources
  
  - Reading:
  
     - Json Files
    ```PYTHON
-  # Read json files
-  # Implicit
-  df = spark.read.format("json").option("path", json_file).load()
-  # Explicit
-  df = spark.read.json(json_file)
+    # Read json files
+    # Implicit
+    df = spark.read.format("json").option("path", json_file).load()
+    # Explicit
+    df = spark.read.json(json_file)
   ```
 
   - CSV Files
@@ -161,7 +161,7 @@ df = df_1.join(df_2,on="key",how="typeOfJoinr"
   df.write.parquet('filename.parquet')
    ```
  
-> Reading or Writing from external sources
+ - Reading or Writing from external sources
 
 - Reading
 
