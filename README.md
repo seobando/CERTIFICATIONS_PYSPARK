@@ -15,7 +15,7 @@ TEXT
 
 ## DataFrame API
  
- Page 145
+Spark is a distributed programming model in which the user specifies transformations. Multiple transformations build up a directed acyclic graph of instructions. An action begins the process of executing that graph of instructions, as a single job, by breaking it down into stages and tasks to execute across the cluster. The logical structures that we manipulate with transformations and actions are DataFrames and Datasets. To create a new DataFrame or Dataset, you call a transformation. To start computation or convert to native language types, you call an action.
 
 Transformations examples: orderBy(), groupBy(), filter(), select(), join()
 Actions examples: show(), take(), count(), collect(), save()
