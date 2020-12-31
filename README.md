@@ -11,6 +11,7 @@ This is a summary of my studies to the Spark Associate Developer for Apache Spar
  
 ## Spark arquitecture
 
+![Spark Architecture](https://github.com/seobando/CERTIFICATIONS_SPARK/blob/main/spark_architecture.jpg?raw=true)
 
 - Spark Application: A user program built on Spark using its APIs. It consists of a driver program and executors on the cluster.
 
