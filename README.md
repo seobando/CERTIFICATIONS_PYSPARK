@@ -76,7 +76,7 @@ df.select("COLUMN_NAME", "COLUMN_NAME").distinct().count()
 df.union(newDF)  
 ```
 
-  - Working with Strings
+> Working with Strings
 ```PYTHON
 # Capitalize every word in a given string
 from pyspark.sql.functions import initcap
@@ -146,7 +146,7 @@ selectedColumns.append(expr("*")) # has to a be Column type
 df.select(*selectedColumns).where(expr("is_white OR is_red")).select("Description").show(3, False)
 ```
 
-  - Working with Dates and Timestamps
+> Working with Dates and Timestamps
 
 ```PYTHON
 # Get current date and current timestamp
@@ -190,7 +190,7 @@ from pyspark.sql.functions import to_timestamp
 cleanDateDF.select(to_timestamp(col("date"), dateFormat)).show()
 ```
 
-  - Working with Nulls in Data
+> Working with Nulls in Data
 
 ```PYTHON
 # Select the first nun-null valur from a set of columns
@@ -238,7 +238,7 @@ asc_nulls_last
 desc_nulls_last
 ```
 
-  - Complex Types
+> Complex Types
 
 ```PYTHON
 # Structs, are like dataframes within a dataframe
@@ -314,6 +314,24 @@ df.where("condition").show()
 ```PYTHON
 # Removing columns
 df.drop("COLUMN_NAME").columns
+```
+
+
+- Sorting:
+```PYTHON
+# API sort
+df.sort(df.age.desc()).collect()
+
+df.sort("age", ascending=False).collect()
+
+df.orderBy(df.age.desc()).collect()
+
+# Sort and orderBy
+from pyspark.sql.functions import *
+
+df.sort(asc("age")).collect()
+df.orderBy(desc("age"), "name").collect()
+df.orderBy(["age", "name"], ascending=[0, 1]).collect()
 ```
 
 - Aggregating:
@@ -432,7 +450,7 @@ maxPurchaseQuantity.alias("maxPurchaseQuantity")).show()
 
 Aggregations across multiple groups
 
-  * Rollups: 
+> Rollups: 
  
 Is a multidimensional aggregation that performs a variety of group-by style calculations
 ```PYTHON
@@ -445,7 +463,7 @@ rolledUpDF.where("Country IS NULL").show()
 rolledUpDF.where("Date IS NULL").show()
 ```
 
-  * Cube: 
+> Cube: 
 
 Takes the rollup to a level deeper. Rather than treating elements hierarchically, a cube does the same thing across all dimensions
 
@@ -456,7 +474,7 @@ dfNoNull.cube("Date", "Country").agg(sum(col("Quantity")))\
 .select("Date", "Country", "sum(Quantity)").orderBy("Date").show()
 ```
 
-  * Pivot: 
+> Pivot: 
 
 Make it possible to convert a row into a column
 
@@ -464,11 +482,6 @@ Make it possible to convert a row into a column
 pivoted = dfWithDate.groupBy("date").pivot("Country").sum()
 
 pivoted.where("date > '2011-12-05'").select("date" ,"`USA_sum(Quantity)`").show()
-```
-
-- Sorting:
-```PYTHON
-
 ```
 
 ## joining, reading, writing and partitioning DataFrames
