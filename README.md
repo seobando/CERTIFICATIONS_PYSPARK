@@ -432,7 +432,7 @@ maxPurchaseQuantity.alias("maxPurchaseQuantity")).show()
 
 Aggregations across multiple groups
 
-  - Rollups***: is a multidimensional aggregation that performs a variety of group-by style calculations
+    - Rollups***: is a multidimensional aggregation that performs a variety of group-by style calculations
 ```PYTHON
 rolledUpDF = dfNoNull.rollup("Date", "Country").agg(sum("Quantity"))\
   .selectExpr("Date", "Country", "`sum(Quantity)` as total_quantity")\
@@ -443,7 +443,7 @@ rolledUpDF.where("Country IS NULL").show()
 rolledUpDF.where("Date IS NULL").show()
 ```
 
-  - Cube***: Takes the rollup to a level deeper. Rather than treating elements hierarchically, a cube does the same thing across all dimensions
+    - Cube***: Takes the rollup to a level deeper. Rather than treating elements hierarchically, a cube does the same thing across all dimensions
 ```PYTHON
 from pyspark.sql.functions import sum
 
@@ -451,7 +451,7 @@ dfNoNull.cube("Date", "Country").agg(sum(col("Quantity")))\
 .select("Date", "Country", "sum(Quantity)").orderBy("Date").show()
 ```
 
-  - Pivot: make it possible to convert a row into a column
+    - Pivot: make it possible to convert a row into a column
 ```PYTHON
 pivoted = dfWithDate.groupBy("date").pivot("Country").sum()
 
