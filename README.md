@@ -17,8 +17,8 @@ TEXT
  
 Spark is a distributed programming model in which the user specifies transformations. Multiple transformations build up a directed acyclic graph of instructions. An action begins the process of executing that graph of instructions, as a single job, by breaking it down into stages and tasks to execute across the cluster. The logical structures that we manipulate with transformations and actions are DataFrames and Datasets. To create a new DataFrame or Dataset, you call a transformation. To start computation or convert to native language types, you call an action.
 
-Transformations examples: orderBy(), groupBy(), filter(), select(), join()
-Actions examples: show(), take(), count(), collect(), save()
+- Transformations examples: orderBy(), groupBy(), filter(), select(), join()
+- Actions examples: show(), take(), count(), collect(), save()
  
 ### Selecting, renaming and manipulating columns:
 
@@ -78,53 +78,58 @@ df.union(newDF)
 
 - Working with Strings
 ```PYTHON
-#
+# Capitalize every word in a given string
 from pyspark.sql.functions import initcap
-df.select(initcap(col("Description"))).show()
 
-#
+df.select(initcap(col("COLUMN_NAME"))).show()
+
+# Lowercase or uppercase a string
 from pyspark.sql.functions import lower, upper
-df.select(col("Description"),
-lower(col("Description")),
-upper(lower(col("Description")))).show(2)
 
-#
+df.select(col("Description"), lower(col("Description")), upper(lower(col("Description")))).show(2)
+
+# Adding or removing spaces around a string
 from pyspark.sql.functions import lit, ltrim, rtrim, rpad, lpad, trim
+
 df.select(
-ltrim(lit(" HELLO ")).alias("ltrim"),
-rtrim(lit(" HELLO ")).alias("rtrim"),
-trim(lit(" HELLO ")).alias("trim"),
-lpad(lit("HELLO"), 3, " ").alias("lp"),
-rpad(lit("HELLO"), 10, " ").alias("rp")).show(2)
+ltrim(lit(" HELLO ")).alias("ltrim"),             # Remove left spaces
+rtrim(lit(" HELLO ")).alias("rtrim"),             # Remove right spaces
+trim(lit(" HELLO ")).alias("trim"),               # Remove all spaces
+lpad(lit("HELLO"), 3, " ").alias("lp"),           # Add and select strings characters from the left 
+rpad(lit("HELLO"), 10, " ").alias("rp")).show(2)  # Add and select strings characters from the right
+
++---------+---------+-----+------+
+| ltrim| rtrim| trim| lp|      rp|
++---------+---------+---+--------+
+|HELLO | HELLO|HELLO| HE|HELLO   |
+|HELLO | HELLO|HELLO| HE|HELLO   |
++---------+---------+---+--------+
 
 # Regular Expressions
 
-##
+## Replace or substitute strings
 from pyspark.sql.functions import regexp_replace
+
 regex_string = "BLACK|WHITE|RED|GREEN|BLUE"
-df.select(
-regexp_replace(col("Description"), regex_string, "COLOR").alias("color_clean"),
-col("Description")).show(2)
+df.select(regexp_replace(col("Description"), regex_string, "COLOR").alias("color_clean"), col("Description")).show(2)
 
-##
+## Replace given characters with other characters
 from pyspark.sql.functions import translate
-df.select(translate(col("Description"), "LEET", "1337"),col("Description"))\
-.show(2)
 
-##
+df.select(translate(col("Description"), "LEET", "1337"),col("Description")).show(2)
+
+## Extract match strings
 from pyspark.sql.functions import regexp_extract
-extract_str = "(BLACK|WHITE|RED|GREEN|BLUE)"
-df.select(
-regexp_extract(col("Description"), extract_str, 1).alias("color_clean"),
-col("Description")).show(2)
 
-##
+extract_str = "(BLACK|WHITE|RED|GREEN|BLUE)"
+df.select(regexp_extract(col("Description"), extract_str, 1).alias("color_clean"),col("Description")).show(2)
+
+## Check if string match
 from pyspark.sql.functions import instr
+
 containsBlack = instr(col("Description"), "BLACK") >= 1
 containsWhite = instr(col("Description"), "WHITE") >= 1
-df.withColumn("hasSimpleColor", containsBlack | containsWhite)\
-.where("hasSimpleColor")\
-.select("Description").show(3, False)
+df.withColumn("hasSimpleColor", containsBlack | containsWhite).where("hasSimpleColor").select("Description").show(3, False)
 
 ##
 ```
@@ -169,14 +174,14 @@ df.select(coalesce(col("Description"), col("CustomerId"))).show()
 - Drop
 
 ```PYTHON
-#
+# If any column has a null value
 df.na.drop()
 df.na.drop("any")
 
-#
+# If all colmns has a null value
 df.na.drop("all")
 
-#
+# If specific columns has all null values
 df.na.drop("all", subset=["StockCode", "InvoiceNo"])
 ```
 
@@ -285,7 +290,7 @@ TEXT
 
 TEXT
 
-- Pivto **
+- Pivot **
 
 
 
@@ -542,7 +547,6 @@ df_2 = spark.sql('SELECT * FROM tableName WHERE condition')
   
 ## REFERENCES
 
-- https://spark.apache.org/docs/latest/api/python/pyspark.html
 - Learning Spark
 - Spark the Definitive Guide
 - DataCamp - Big Data Fundamentals with PySpark
