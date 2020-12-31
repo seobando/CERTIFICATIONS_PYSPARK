@@ -376,25 +376,91 @@ df.groupBy("InvoiceNo").agg(expr("avg(Quantity)"),expr("stddev_pop(Quantity)")).
 
 - Window Functions **
 
-TEXT
+You can also use window functions to carry out some unique aggregations by either computing some aggregation on a specific "window" of data, which you define by using a reference to the current data.
 
-- Rollups **
+A window function calculates a return value for every input row of a table based on a group of rows, called a frame.
 
-TEXT
+Kinds of window functions:
 
-- Cube **
+- Ranking functions
+- Analytic functions
+- Aggregate functions
 
-TEXT
+```PYTHON
+# 1. Create a column with only date format values
+from pyspark.sql.functions import col, to_date
 
-- Pivot **
+dfWithDate = df.withColumn("date", to_date(col("InvoiceDate"), "MM/d/yyyy H:mm"))
+dfWithDate.createOrReplaceTempView("dfWithDate")
 
+# 2. Create a window specification
+from pyspark.sql.window import Window
+from pyspark.sql.functions import desc
 
+windowSpec = Window\
+.partitionBy("CustomerId", "date")\                         # Define how the group is going to be breaking
+.orderBy(desc("Quantity"))\ 
+.rowsBetween(Window.unboundedPreceding, Window.currentRow)  # States which rows will be included in the frame based on its reference to the current input row.
+
+# 3. Apply and aggregation function
+from pyspark.sql.functions import max
+
+maxPurchaseQuantity = max(col("Quantity")).over(windowSpec)
+
+# 4. Rank specific data
+from pyspark.sql.functions import dense_rank, rank
+
+purchaseDenseRank = dense_rank().over(windowSpec)
+purchaseRank = rank().over(windowSpec)
+
+# 5. Select
+
+from pyspark.sql.functions import col
+
+dfWithDate.where("CustomerId IS NOT NULL").orderBy("CustomerId")\
+.select(
+col("CustomerId"),
+col("date"),
+col("Quantity"),
+purchaseRank.alias("quantityRank"),
+purchaseDenseRank.alias("quantityDenseRank"),
+maxPurchaseQuantity.alias("maxPurchaseQuantity")).show()
+
+```
+
+- Grouping Sets
+
+Aggregations across multiple groups
+
+  - Rollups***: is a multidimensional aggregation that performs a variety of group-by style calculations
+```PYTHON
+rolledUpDF = dfNoNull.rollup("Date", "Country").agg(sum("Quantity"))\
+  .selectExpr("Date", "Country", "`sum(Quantity)` as total_quantity")\
+  .orderBy("Date")
+rolledUpDF.show()
+
+rolledUpDF.where("Country IS NULL").show()
+rolledUpDF.where("Date IS NULL").show()
+```
+
+  - Cube***: Takes the rollup to a level deeper. Rather than treating elements hierarchically, a cube does the same thing across all dimensions
+```PYTHON
+from pyspark.sql.functions import sum
+
+dfNoNull.cube("Date", "Country").agg(sum(col("Quantity")))\
+.select("Date", "Country", "sum(Quantity)").orderBy("Date").show()
+```
+
+  - Pivot: make it possible to convert a row into a column
+```PYTHON
+pivoted = dfWithDate.groupBy("date").pivot("Country").sum()
+
+pivoted.where("date > '2011-12-05'").select("date" ,"`USA_sum(Quantity)`").show()
+```
 
 - Sorting:
 ```PYTHON
-df.sort("count").show(5)
-df.orderBy("count", "DEST_COUNTRY_NAME").show(5)
-df.orderBy(col("count"), col("DEST_COUNTRY_NAME")).show(5)
+
 ```
 
 ## joining, reading, writing and partitioning DataFrames
