@@ -76,7 +76,7 @@ df.select("COLUMN_NAME", "COLUMN_NAME").distinct().count()
 df.union(newDF)  
 ```
 
-- Working with Strings
+  - Working with Strings
 ```PYTHON
 # Capitalize every word in a given string
 from pyspark.sql.functions import initcap
@@ -131,74 +131,170 @@ containsBlack = instr(col("Description"), "BLACK") >= 1
 containsWhite = instr(col("Description"), "WHITE") >= 1
 df.withColumn("hasSimpleColor", containsBlack | containsWhite).where("hasSimpleColor").select("Description").show(3, False)
 
-##
+## Locate the position of the first ocurrence of substr
+from pyspark.sql.functions import expr, locate
+
+simpleColors = ["black", "white", "red", "green", "blue"]
+
+def color_locator(column, color_string):
+  return locate(color_string.upper(), column).cast("boolean").alias("is_" + c)
+
+selectedColumns = [color_locator(df.Description, c) for c in simpleColors]
+
+selectedColumns.append(expr("*")) # has to a be Column type
+
+df.select(*selectedColumns).where(expr("is_white OR is_red")).select("Description").show(3, False)
 ```
 
-- Working with Dates and Timestamps
+  - Working with Dates and Timestamps
 
 ```PYTHON
-#
+# Get current date and current timestamp
+from pyspark.sql.functions import current_date, current_timestamp
+
+dateDF = spark.range(10).withColumn("today", current_date()).withColumn("now", current_timestamp())
+
+dateDF.createOrReplaceTempView("dateTable")
+
+# Substract and add days to a date
 from pyspark.sql.functions import date_add, date_sub
+
 dateDF.select(date_sub(col("today"), 5), date_add(col("today"), 5)).show(1)
 
-#
+# Calculate the difference between dates in days
 dateDF.withColumn("week_ago", date_sub(col("today"), 7)).select(datediff(col("week_ago"), col("today"))).show(1)
-dateDF.select(to_date(lit("2016-01-01")).alias("start"),to_date(lit("2017-05-22")).alias("end")).select(months_between(col("start"), col("end"))).show(1)
 
-#
+# Calculate the difference between dates in months
+dateDF.select(to_date(lit("2016-01-01")).alias("start"), \
+to_date(lit("2017-05-22")) \ # Allows to convert a string into a date
+.alias("end")) \
+.select(months_between(col("start"), col("end"))).show(1)
+
+# Convert a string date into date format
 from pyspark.sql.functions import to_date, lit
+
 spark.range(5).withColumn("date", lit("2017-01-01")).select(to_date(col("date"))).show(1)
 
-#
+# Avoid spark to throws null when don't convert correctly a date by adding the specific format to_date
 from pyspark.sql.functions import to_date
 
+## date
 dateFormat = "yyyy-dd-MM"
 cleanDateDF = spark.range(1).select(
     to_date(lit("2017-12-11"), dateFormat).alias("date"),
     to_date(lit("2017-20-12"), dateFormat).alias("date2"))
 cleanDateDF.createOrReplaceTempView("dateTable2")
 
-#
+## timestamp
 from pyspark.sql.functions import to_timestamp
 cleanDateDF.select(to_timestamp(col("date"), dateFormat)).show()
 ```
 
-- Working with Nulls in Data
+  - Working with Nulls in Data
 
 ```PYTHON
-# Coalesce
+# Select the first nun-null valur from a set of columns
 from pyspark.sql.functions import coalesce
 df.select(coalesce(col("Description"), col("CustomerId"))).show()
-```
 
-- Drop
+# ifnull, allows to select the second value if the first is null, and defaults to the first
+ifnull(null, 'return_value')
 
-```PYTHON
-# If any column has a null value
+# nullif, returns null if the two values are equal or else returns the second if they are not
+nullif('value', 'value')
+
+# nvl, returns the second value if the first is null, but defaults to the first
+nvl(null, 'return_value')
+
+# nvl2, returns the second value if the first is not null; otherwise, it will return the last specified value
+nvl2('not_null', 'return_value', "else_value")
+
+# Drop null
+## If any column has a null value
 df.na.drop()
 df.na.drop("any")
 
-# If all colmns has a null value
+## If all colmns has a null value
 df.na.drop("all")
 
-# If specific columns has all null values
+## If specific columns has all null values
 df.na.drop("all", subset=["StockCode", "InvoiceNo"])
-```
 
-- Fill
-```PYTHON
-#
+# Fill
+## Fill all null values in columns of type String
 df.na.fill("All Null values become this string")
 
-#
+## Fill all null values in columns of type String in specific columns
 df.na.fill("all", subset=["StockCode", "InvoiceNo"])
-```
 
-- Replace
-```PYTHON
+# Replace
+# The mos common use case is to replace all valies in a certain column according to their current value, but the only requirement is that this value has to be the same type as the original value
 df.na.replace([""], ["UNKNOWN"], "Description")
+
+# Ordering, to specify where you woul like your null values to appear
+asc_nulls_first
+desc_nulls_first
+asc_nulls_last
+desc_nulls_last
 ```
 
+  - Complex Types
+
+```PYTHON
+# Structs, are like dataframes within a dataframe
+from pyspark.sql.functions import struct
+
+complexDF = df.select(struct("Description", "InvoiceNo").alias("complex"))
+complexDF.createOrReplaceTempView("complexDF")
+
+## Query all columns
+complexDF.select("complex.*")
+
+# Arrays
+
+## Split
+from pyspark.sql.functions import split
+
+df.select(split(col("Description"), " ")).show(2)
+
+## Query array
+df.select(split(col("Description"), " ").alias("array_col")).selectExpr("array_col[0]").show(2)
+
+## Array Length
+from pyspark.sql.functions import size
+
+df.select(size(split(col("Description"), " "))).show(2) # shows 5 and 3
+
+## Verify if there is a specific value in an array
+from pyspark.sql.functions import array_contains
+
+df.select(array_contains(split(col("Description"), " "), "WHITE")).show(2)
+
+## Conver a complex type into a set of rows, similar to unnest 
+from pyspark.sql.functions import split, explode
+
+df.withColumn("splitted", split(col("Description"), " ")).withColumn("exploded", explode(col("splitted"))).select("Description", "InvoiceNo", "exploded").show(2)
+
+# Maps
+## Similar to dictionary is like an array with key-values
+from pyspark.sql.functions import create_map
+
+df.select(create_map(col("Description"), col("InvoiceNo")).alias("complex_map")).show(2)
+
+# Querying
+df.select(map(col("Description"), col("InvoiceNo")).alias("complex_map")).selectExpr("complex_map['WHITE METAL LANTERN']").show(2)
+
+# Explode maps
+df.select(map(col("Description"), col("InvoiceNo")).alias("complex_map")).selectExpr("explode(complex_map)").show(2)
+
++--------------------+------+
+| key                | value|
++--------------------+------+
+|WHITE HANGING HEA...|536365|
+| WHITE METAL LANTERN|536365|
++--------------------+------+
+
+```
 ## Filtering, dropping, sorting, and aggregating rows
 
 - Filtering:
