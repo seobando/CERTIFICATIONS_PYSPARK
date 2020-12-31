@@ -17,13 +17,13 @@ This is a summary of my studies to the Spark Associate Developer for Apache Spar
 
   - Spark Driver:
   
-  1. Is the responsible for instantiating a SparkSession. 
-  2. Communicates with the cluster manager. 
-  3. Request resources (CPU, memory, etc).
-  4. Transforms all the Spark operations into DAG computations.
-  5. Schedules themand distributes their execution as tasks across the Spark executors. 
-  6. Once the resources are allocated. 
-  7. It communicates directly with the executor.
+    1. Is the responsible for instantiating a SparkSession. 
+    2. Communicates with the cluster manager. 
+    3. Request resources (CPU, memory, etc).
+    4. Transforms all the Spark operations into DAG computations.
+    5. Schedules themand distributes their execution as tasks across the Spark executors. 
+    6. Once the resources are allocated. 
+    7. It communicates directly with the executor.
 
    - SparkSession
     
