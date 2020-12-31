@@ -25,7 +25,7 @@ This is a summary of my studies to the Spark Associate Developer for Apache Spar
   6. Once the resources are allocated. 
   7. It communicates directly with the executor.
 
-    - SparkSession
+   - SparkSession
     
     An object that provides a point of entry to interact with underlying Spark functionality and allows programming Sprk with its APIs. Not only did it subsume previous entry points to Spark like the SparkContext, SQLContext, HiveContext, SparkConf, and StreamingContext, but it also made working with Spark simplear and easier.
 
