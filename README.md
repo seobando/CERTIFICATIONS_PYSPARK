@@ -316,7 +316,6 @@ df.where("condition").show()
 df.drop("COLUMN_NAME").columns
 ```
 
-
 - Sorting:
 ```PYTHON
 # API sort
@@ -488,22 +487,32 @@ pivoted.where("date > '2011-12-05'").select("date" ,"`USA_sum(Quantity)`").show(
  
 - Joining:
 
+There are a variety of different join types available in Spark:
+
+  - Inner joins (keep rows with keys that exist in the left and right datasets)
+  - Outer joins (keep rows with keys in either the left or right datasets)
+  - Left outer joins (keep rows with keys in the left dataset)
+  - Right outer joins (keep rows with keys in the right dataset)
+  - Left semi joins (keep the rows in the left, and only the left, dataset where the key appears in the right dataset)
+  - Left anti joins (keep the rows in the left, and only the left, dataset where they do not appear in the right dataset)
+  - Natural joins (perform a join by implicitly matching the columns between the two datasets with the same names)
+  - Cross (or Cartesian) joins (match every row in the left dataset with every row in the right dataset) or inner joins that do not specify a predicate
+
 ```PYTHON
 # Structure
 df = df_1.join(df_2,on="key",how="typeOfJoinr"
 
 # Inner Joins
-#
+# Form 1
 joinExpression = person["graduate_program"] == graduateProgram['id']
 wrongJoinExpression = person["name"] == graduateProgram["school"]
 person.join(graduateProgram, joinExpression).show()
-#
+# Form 2
 joinType = "inner"
 person.join(graduateProgram, joinExpression, joinType).show()
 
 # Outer Joins
 joinType = "outer"
-
 person.join(graduateProgram, joinExpression, joinType).show()
 
 # Left Outer Joins
@@ -528,14 +537,16 @@ joinType = "left_anti"
 graduateProgram.join(person, joinExpression, joinType).show()
 ```
 
-- Cross (Cartesian) Joins **
+- Cross (Cartesian) Joins 
+
+Will join every single row in the left DataFrame to every single row in the right DataFrame
 
 ```PYTHON
-#
+# Form 1
 joinType = "cross"
 graduateProgram.join(person, joinExpression, joinType).show()
 
-#
+# Form 2
 script = "SELECT * FROM graduateProgram CROSS JOIN person " \
 "ON graduateProgram.id = person.graduate_program"
 person.crossJoin(graduateProgram).show()
@@ -664,10 +675,9 @@ person.crossJoin(graduateProgram).show()
 
 - Partition:
 
-```PYTHON
-PENDING
-```
- 
+  - A partition is a logical division of a large distributed data set
+  - The number of partitions in an RDD can be found by using getNumPartitions() method
+
 ## Working with UDFs and Spark SQL functions
   
 ### UDFS 
@@ -730,6 +740,6 @@ df_2 = spark.sql('SELECT * FROM tableName WHERE condition')
   
 ## REFERENCES
 
-- Learning Spark
-- Spark the Definitive Guide
-- DataCamp - Big Data Fundamentals with PySpark
+- [Learning Spark](https://www.amazon.com/-/es/Jules-S-Damji/dp/1492050040/ref=sr_1_1__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Learning+Spark&qid=1609429204&sr=8-1)
+- [Spark the Definitive Guide](https://www.amazon.com/-/es/Bill-Chambers/dp/1491912219/ref=sr_1_1?__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Spark+the+Definitive+Guide&qid=1609429241&sr=8-1)
+- [DataCamp - Big Data Fundamentals with PySpark](https://www.datacamp.com/courses/big-data-fundamentals-with-pyspark)
