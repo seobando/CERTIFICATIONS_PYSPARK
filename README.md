@@ -11,7 +11,41 @@ This is a summary of my studies to the Spark Associate Developer for Apache Spar
  
 ## Spark arquitecture
 
-TEXT
+
+- Spark Application: A user program built on Spark using its APIs. It consists of a driver program and executors on the cluster.
+
+  - Spark Driver:
+  
+  1. Is the responsible for instantiating a SparkSession. 
+  2. Communicates with the cluster manager. 
+  3. Request resources (CPU, memory, etc).
+  4. Transforms all the Spark operations into DAG computations.
+  5. Schedules themand distributes their execution as tasks across the Spark executors. 
+  6. Once the resources are allocated. 
+  7. It communicates directly with the executor.
+
+    - SparkSession
+    
+    An object that provides a point of entry to interact with underlying Spark functionality and allows programming Sprk with its APIs. Not only did it subsume previous entry points to Spark like the SparkContext, SQLContext, HiveContext, SparkConf, and StreamingContext, but it also made working with Spark simplear and easier.
+
+- Cluster Manager
+
+Is responsible for managing and allocating resources for the cluster of nodes on which the Spark application runs and Support as cluster managers: the built-in standalone cluster manager, Apache Hadoop, YARN, Apache Mesos, and Kubernetes.
+
+- Spark Executor
+
+  - Runs on each worker node in the cluster. 
+  - Communicate with the driver program
+  - Are responsible for executing tasks on the workers
+  - In most deployments modes, only a single executer runs per node.
+  
+- Core
+
+  - Job: parallel computation consisting of multiple tasks that gets spawned in response to a Spark action (e.g., save(), collect()). 
+ 
+    - Stage: Each job gets divided into smaller sets of tasks called stages that depend on each other.
+  
+      - Task: A single unit of work or execution that will be sent to a Spark executor.
 
 ## DataFrame API
  
