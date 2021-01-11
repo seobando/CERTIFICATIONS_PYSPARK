@@ -100,8 +100,8 @@ df.select(lit(5), lit("five"), lit(5.0))
 df.withColumn("count2", col("count").cast("long"))
 
 # Control Flow
-df.select(df.Name, df.Age,
-  .when(df.Age >= 18, "Adult")
+df.select(df.Name, df.Age
+  ,when(df.Age >= 18, "Adult")
   .otherwise("Minor"))
   
 # Getting Unique Rows
